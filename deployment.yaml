@@ -1,0 +1,65 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app-php
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: app-php
+  template:
+    metadata:
+      labels:
+        app: app-php
+    spec:
+      containers:
+      - name: app-php
+        image: lteixeiramnc/app-php:1.0
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 80
+          name: app-php
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: banco-mysql
+  namespace: default
+  labels:
+    app: banco-mysql
+spec:
+  selector:
+    matchLabels:
+      app: banco-mysql
+  template:
+    metadata:
+      labels:
+        app: banco-mysql
+    spec:
+      containers:
+      - name: banco-mysql
+        image: lteixeiramnc/meubanco:1.0
+        args:
+        - "--ignore-db-dir=lost+found"
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 3306
+          name:  banco-mysql
+
+        volumeMounts:
+        - name: localtime
+          mountPath: /etc/localtime
+
+        - name: volume-curso-dio
+          mountPath: /var/lib/mysql/
+
+      volumes:
+        - name: localtime
+          hostPath:
+            path: /usr/share/zoneinfo/America/Sao_Paulo
+
+        - name: volume-curso-dio
+          persistentVolumeClaim:
+            claimName: pvc-curso-dio

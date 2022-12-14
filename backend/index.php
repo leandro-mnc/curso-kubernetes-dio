@@ -1,4 +1,5 @@
-<?
+<?php
+
 header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Headers: *");
 
@@ -17,4 +18,3 @@ if ($link->query($query) === TRUE) {
 } else {
   echo "Error: " . $link->error;
 }
-?>
